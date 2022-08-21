@@ -23,8 +23,8 @@ export type Player = {
 }
 
 export type CellEmpty = 'E'
-export type cellState = PlayerColor.RED | PlayerColor.YELLOW | CellEmpty | 'R' | 'Y'
-export type GridState = cellState[][]
+export type CellState = PlayerColor.RED | PlayerColor.YELLOW | CellEmpty | 'R' | 'Y'
+export type GridState = CellState[][]
 export type GameContext = ContextFrom<typeof GameModel>
 export type GameEvents = EventFrom<typeof GameModel>
 export type GameEvent<T extends GameEvents['type']> = GameEvents & { type: T }
