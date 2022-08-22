@@ -8,6 +8,8 @@ function App() {
     <div className="App">
       <div className="container">
         <Grid
+          color={PlayerColor.RED}
+          onDrop={console.log}
           grid={[
             ['E', 'E', 'E', 'E', 'E', 'E', 'R'],
             ['E', 'E', 'E', 'E', 'E', 'R', 'Y'],

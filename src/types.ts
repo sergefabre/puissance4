@@ -15,6 +15,7 @@ export type Position = {
 export enum PlayerColor {
   RED = 'R',
   YELLOW = 'Y',
+  VIDE = 'E',
 }
 export type Player = {
   id: string
