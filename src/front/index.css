@@ -15,9 +15,41 @@ button {
   cursor: pointer;
 }
 
+label {
+  font: inherit;
+}
+
+input {
+  padding: 0.4rem 1rem;
+  margin: 0px 5px 0px 5px;
+  font: inherit;
+  line-height: 1;
+  border-radius: 5px;
+  border: 1px solid darkgrey;
+}
+
+.alert {
+  padding: 1rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: solid 1px #f5c6cb;
+  border-radius: 5px;
+}
+
+input:disabled {
+  opacity: 0.4;
+}
+
 .container {
   max-width: 600px;
   margin: 0 auto;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
 }
 
 .players {
@@ -114,4 +146,17 @@ button {
   from {
     transform: translateY(calc(-125% * var(--row)));
   }
+}
+
+.button {
+  background-color: darkgray;
+  font: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  color: #fff;
+  line-height: 1;
+}
+
+.button:hover {
+  background-color: rgb(68, 66, 66);
 }

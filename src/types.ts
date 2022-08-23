@@ -15,7 +15,6 @@ export type Position = {
 export enum PlayerColor {
   RED = 'R',
   YELLOW = 'Y',
-  VIDE = 'E',
 }
 export type Player = {
   id: string
@@ -24,7 +23,7 @@ export type Player = {
 }
 
 export type CellEmpty = 'E'
-export type CellState = PlayerColor.RED | PlayerColor.YELLOW | CellEmpty | 'R' | 'Y'
+export type CellState = 'R' | 'Y' | CellEmpty | PlayerColor.RED | PlayerColor.YELLOW
 export type GridState = CellState[][]
 export type GameContext = ContextFrom<typeof GameModel>
 export type GameEvents = EventFrom<typeof GameModel>

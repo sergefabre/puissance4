@@ -10,14 +10,14 @@ type GridProps = {
 }
 export function Grid({ grid, color, onDrop }: GridProps) {
   const cols = grid[0].length
-  const showColumns = color
+  const showColumns = color && onDrop
   return (
     <div className="grid" style={{ '--rows': grid.length, '--cols': cols } as CSSProperties}>
       {grid.map((row, y) => row.map((c, x) => <Cell x={x} y={y} color={c} key={`${x}-${y}`} />))}
       {showColumns && (
         <div className="columns">
           {new Array(cols).fill(1).map((_, k) => (
-            <Column onDrop={onDrop!(k)} color={color} key={k} />
+            <Column onDrop={() => onDrop(k)} color={color} key={k} />
           ))}
         </div>
       )}
@@ -31,11 +31,7 @@ type CellProps = {
 }
 
 function Cell({ x, y, color }: CellProps) {
-  return (
-    <div style={{ '--row': y } as CSSProperties} className={discColorClass(color)}>
-      {/* {x} - {y} */}
-    </div>
-  )
+  return <div style={{ '--row': y } as CSSProperties} className={discColorClass(color)} />
 }
 
 type ColumnProps = {
