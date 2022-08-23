@@ -1,6 +1,6 @@
-import { createMachine, interpret, InterpreterFrom } from 'xstate'
+import { interpret, InterpreterFrom } from 'xstate'
 import { createModel } from 'xstate/lib/model'
-import { GameContext, GameStates, GridState, Player, Position, PlayerColor } from '../types'
+import { GameContext, GameStates, GridState, Player, Position } from '../types'
 import {
   chooseColorAction,
   dropTokenAction,
