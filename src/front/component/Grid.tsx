@@ -12,7 +12,7 @@ type GridProps = {
 export function Grid({ grid, color, onDrop, winingPositions }: GridProps) {
   const cols = grid[0].length
   const showColumns = color && onDrop
-  const isWining = (x: number, y: number) => winingPositions.find((p) => p.x === x && p.y === y)
+  const isWining = (x: number, y: number) => !!winingPositions.find((p) => p.x === x && p.y === y)
   return (
     <div className="grid" style={{ '--rows': grid.length, '--cols': cols } as CSSProperties}>
       {grid.map((row, y) =>
