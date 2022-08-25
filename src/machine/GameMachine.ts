@@ -1,6 +1,6 @@
 import { interpret, InterpreterFrom } from 'xstate'
 import { createModel } from 'xstate/lib/model'
-import { GameContext, GameStates, GridState, Player, Position } from '../types'
+import { GameContext, GameStates, GridState, Player, PlayerColor, Position } from '../types'
 import {
   chooseColorAction,
   dropTokenAction,
@@ -43,15 +43,30 @@ export const GameModel = createModel(
       chooseColor: (playerId: Player['id'], color: Player['color']) => ({ playerId, color }),
       start: (playerId: Player['id']) => ({ playerId }),
       dropToken: (playerId: Player['id'], x: number) => ({ playerId, x }),
-      restart: () => ({}),
+      restart: (playerId: Player['id']) => ({ playerId }),
     },
   }
 )
 
 export const GameMachine = GameModel.createMachine({
   id: 'game',
-  context: GameModel.initialContext,
-  initial: GameStates.LOBBY,
+  context: {
+    ...GameModel.initialContext,
+    players: [
+      {
+        id: 'Aline',
+        name: 'Aline',
+        color: PlayerColor.YELLOW,
+      },
+      {
+        id: 'Serge',
+        name: 'Serge',
+        color: PlayerColor.RED,
+      },
+    ],
+    currentPlayer: 'Aline',
+  },
+  initial: GameStates.PLAY,
   states: {
     [GameStates.LOBBY]: {
       on: {
@@ -116,6 +131,7 @@ export const GameMachine = GameModel.createMachine({
       on: {
         restart: {
           target: GameStates.LOBBY,
+          actions: [GameModel.assign(restartAction)],
         },
       },
     },

@@ -17,7 +17,7 @@ button {
 
 button:disabled {
   opacity: 0.4;
-  cursor: not-allowed;
+  /* cursor: not-allowed; */
 }
 
 label {
@@ -119,7 +119,15 @@ input:disabled {
   width: 80%;
   aspect-ratio: 1/1;
   height: auto;
+}
+
+.grid .disc-yellow,
+.grid .disc-red {
   animation: Drop calc(0.2s * var(--row)) both;
+}
+
+.disc-active {
+  border: 8px solid rgb(16, 204, 72);
 }
 
 .columns {

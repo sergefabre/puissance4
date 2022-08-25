@@ -1,19 +1,23 @@
 import { CSSProperties } from 'react'
 import { discColorClass } from '../../func/color'
 import { prevent } from '../../func/dom'
-import { CellState, GridState, PlayerColor } from '../../types'
+import { CellState, GridState, PlayerColor, Position } from '../../types'
 
 type GridProps = {
   grid: GridState
   color?: PlayerColor
   onDrop?: (x: number) => void
+  winingPositions: Position[]
 }
-export function Grid({ grid, color, onDrop }: GridProps) {
+export function Grid({ grid, color, onDrop, winingPositions }: GridProps) {
   const cols = grid[0].length
   const showColumns = color && onDrop
+  const isWining = (x: number, y: number) => winingPositions.find((p) => p.x === x && p.y === y)
   return (
     <div className="grid" style={{ '--rows': grid.length, '--cols': cols } as CSSProperties}>
-      {grid.map((row, y) => row.map((c, x) => <Cell x={x} y={y} color={c} key={`${x}-${y}`} />))}
+      {grid.map((row, y) =>
+        row.map((c, x) => <Cell active={isWining(x, y)} x={x} y={y} color={c} key={`${x}-${y}`} />)
+      )}
       {showColumns && (
         <div className="columns">
           {new Array(cols).fill(1).map((_, k) => (
@@ -28,10 +32,13 @@ type CellProps = {
   x: number
   y: number
   color: CellState
+  active: boolean
 }
 
-function Cell({ x, y, color }: CellProps) {
-  return <div style={{ '--row': y } as CSSProperties} className={discColorClass(color)} />
+function Cell({ x, y, color, active }: CellProps) {
+  return (
+    <div style={{ '--row': y } as CSSProperties} className={discColorClass(color) + (active ? ' disc-active' : '')} />
+  )
 }
 
 type ColumnProps = {

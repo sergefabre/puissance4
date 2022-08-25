@@ -12,8 +12,8 @@ export function LobbyScreen({}: LobbyScreenProps) {
   const joinGame = (name: string) => send({ type: 'join', name: name, playerId: name })
   const chooseColor = (color: PlayerColor) =>
     send({ type: 'chooseColor', color, playerId: color === PlayerColor.YELLOW ? 'Aline' : 'Serge' })
-  const startGame = () => send({ type: 'start', playerId: 'Aline' })
-  const canStart = can({ type: 'start', playerId: 'Aline' })
+  const startGame = () => send({ type: 'start' })
+  const canStart = can({ type: 'start' })
 
   return (
     <div>
