@@ -2,6 +2,7 @@ import { createContext, PropsWithChildren, useCallback, useContext } from 'react
 import { GameMachine } from '../../machine/GameMachine'
 import { GameContext, GameEvent, GameEvents, GameStates, Player } from '../../types'
 import { useMachine } from '@xstate/react'
+import { getSession } from '../func/session'
 
 type GameContextType = {
   state: GameStates
@@ -19,7 +20,7 @@ export function useGame(): GameContextType {
 
 export function GameContextProvider({ children }: PropsWithChildren) {
   const [state, send] = useMachine(GameMachine)
-  const playerId = state.context.currentPlayer ?? ''
+  const playerId = getSession()?.id ?? ''
   const sendWithPlayer = useCallback<GameContextType['send']>(
     (event) => send({ playerId, ...event } as GameEvents),
     [playerId]

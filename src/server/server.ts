@@ -9,10 +9,10 @@ fastify.register(FastifyStatic, {
   root: resolve('./public'),
 })
 
-fastify.get('/api/players', (req, res) => {
+fastify.post('/api/players', (req, res) => {
   const playerId = v4()
   res.send({
-    playerId,
+    id: playerId,
     signature: sign(playerId),
   })
 })
