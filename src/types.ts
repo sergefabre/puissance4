@@ -1,6 +1,10 @@
 import { ContextFrom, EventFrom } from 'xstate'
 import { GameModel } from './machine/GameMachine'
 
+export enum ServerError {
+  AuthError,
+}
+
 export enum GameStates {
   LOBBY = 'LOBBY',
   PLAY = 'PLAY',
