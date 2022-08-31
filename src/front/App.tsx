@@ -20,25 +20,25 @@ function App() {
       }
     : undefined
 
-  useEffect(() => {
-    if (playerId) {
-      const searchParams = new URLSearchParams({
-        id: playerId,
-        signature: getSession()!.signature!,
-        name: getSession()!.name!,
-        gameId: 'testGameId',
-      })
-      const socket = new WebSocket(
-        `${window.location.protocol.replace('http', 'ws')}//${window.location.host}/ws?${searchParams.toString()}`
-      )
-      socket.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data)
-        if (message.type === 'error' && message.code === ServerError.AuthError) {
-          logout()
-        }
-      })
-    }
-  }, [playerId])
+  // useEffect(() => {
+  //   if (playerId) {
+  //     const searchParams = new URLSearchParams({
+  //       id: playerId,
+  //       signature: getSession()!.signature!,
+  //       name: getSession()!.name!,
+  //       gameId: 'testGameId',
+  //     })
+  //     const socket = new WebSocket(
+  //       `${window.location.protocol.replace('http', 'ws')}//${window.location.host}/ws?${searchParams.toString()}`
+  //     )
+  //     socket.addEventListener('message', (event) => {
+  //       const message = JSON.parse(event.data)
+  //       if (message.type === 'error' && message.code === ServerError.AuthError) {
+  //         logout()
+  //       }
+  //     })
+  //   }
+  // }, [playerId])
 
   if (!playerId) {
     return (
