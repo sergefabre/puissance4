@@ -6,10 +6,11 @@ import { CellState, GridState, PlayerColor, Position } from '../../types'
 type GridProps = {
   grid: GridState
   color?: PlayerColor
-  onDrop?: (x: number) => void
+  onDrop: (x: number) => void
   winingPositions: Position[]
+  canDrop: (x: number) => boolean
 }
-export function Grid({ grid, color, onDrop, winingPositions }: GridProps) {
+export function Grid({ grid, color, onDrop, winingPositions, canDrop }: GridProps) {
   const cols = grid[0].length
   const showColumns = color && onDrop
   const isWining = (x: number, y: number) => !!winingPositions.find((p) => p.x === x && p.y === y)
@@ -21,7 +22,7 @@ export function Grid({ grid, color, onDrop, winingPositions }: GridProps) {
       {showColumns && (
         <div className="columns">
           {new Array(cols).fill(1).map((_, k) => (
-            <Column onDrop={() => onDrop(k)} color={color} key={k} />
+            <Column x={k} onDrop={onDrop} color={color} disabled={!canDrop(k)} key={k} />
           ))}
         </div>
       )}
@@ -42,12 +43,14 @@ function Cell({ x, y, color, active }: CellProps) {
 }
 
 type ColumnProps = {
+  x: number
   color: PlayerColor
-  onDrop: () => void
+  onDrop: (x: number) => void
+  disabled?: boolean
 }
-function Column({ color, onDrop }: ColumnProps) {
+function Column({ color, onDrop, x, disabled }: ColumnProps) {
   return (
-    <button onClick={prevent(onDrop)} className="column">
+    <button onClick={prevent(() => onDrop(x))} className="column" disabled={disabled}>
       <div className={discColorClass(color)}></div>
     </button>
   )

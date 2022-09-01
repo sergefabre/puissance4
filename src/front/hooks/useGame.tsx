@@ -1,14 +1,24 @@
-import { createContext, PropsWithChildren, useCallback, useContext, useState } from 'react'
-import { GameMachine } from '../../machine/GameMachine'
-import { GameContext, GameEvent, GameEvents, GameStates, Player, PlayerSession } from '../../types'
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react'
+import { GameMachine, makeGame } from '../../machine/GameMachine'
+import {
+  GameContext,
+  GameEvent,
+  GameEvents,
+  GameStates,
+  Player,
+  PlayerSession,
+  QueryParam,
+  ServerError,
+} from '../../types'
 import { useMachine } from '@xstate/react'
-import { getSession } from '../func/session'
-import { URLSearchParams } from 'url'
+import { getSession, logout } from '../func/session'
 import ReconnectingWebSocket from 'reconnecting-websocket'
+import { urlSearchParam } from '../func/url'
+import { InterpreterFrom } from 'xstate'
 
 type GameContextType = {
-  state: GameStates
-  context: GameContext
+  state?: GameStates
+  context?: GameContext
   connect: (session: PlayerSession, gameId: string) => void
   send: <T extends GameEvents['type']>(event: { type: T; playerId?: string } & Omit<GameEvent<T>, 'playerId'>) => void
   can: <T extends GameEvents['type']>(event: { type: T; playerId?: string } & Omit<GameEvent<T>, 'playerId'>) => boolean
@@ -22,16 +32,19 @@ export function useGame(): GameContextType {
 }
 
 export function GameContextProvider({ children }: PropsWithChildren) {
-  const [state, send] = useMachine(GameMachine)
+  const [machine, setMachine] = useState<InterpreterFrom<typeof GameMachine>>(makeGame())
   const [playerId, setPlayerId] = useState('')
   const [socket, setSocket] = useState<ReconnectingWebSocket | null>(null)
   const sendWithPlayer = useCallback<GameContextType['send']>(
-    (event) => send({ playerId, ...event } as GameEvents),
+    (event) => {
+      const eventWithPlayer = { playerId, ...event }
+      socket?.send(JSON.stringify({ type: 'gameUpdate', event: eventWithPlayer }))
+    },
     [playerId]
   )
   const can = useCallback<GameContextType['can']>(
-    (event) => !!GameMachine.transition(state, { playerId, ...event } as GameEvents).changed,
-    [state, playerId]
+    (event) => !!GameMachine.transition(machine?.state, { playerId, ...event } as GameEvents).changed,
+    [machine?.state, playerId]
   )
   const connect: GameContextType['connect'] = (session, gameId) => {
     const searchParams = new URLSearchParams({
@@ -44,12 +57,38 @@ export function GameContextProvider({ children }: PropsWithChildren) {
     )
     setSocket(socket)
   }
+
+  useEffect(() => {
+    if (!socket) {
+      const gameId = urlSearchParam().get(QueryParam.GAMEID)
+      const session = getSession()
+      if (gameId && session) {
+        connect(session, gameId)
+        setPlayerId(session.id)
+      }
+      return
+    }
+    const onMessage = (event: MessageEvent) => {
+      const message = JSON.parse(event.data)
+      if (message.type === 'error' && message.code === ServerError.AuthError) {
+        logout()
+        setPlayerId('')
+      } else if (message.type === 'gameUpdate') {
+        setMachine(makeGame(message.state, message.context))
+      }
+    }
+    socket.addEventListener('message', onMessage)
+    return () => {
+      socket.removeEventListener('message', onMessage)
+    }
+  }, [socket])
+
   return (
     <Context.Provider
       value={{
         playerId,
-        state: state.value as GameStates,
-        context: state.context,
+        state: machine?.state.value as GameStates,
+        context: machine?.state.context,
         send: sendWithPlayer,
         can,
         connect,

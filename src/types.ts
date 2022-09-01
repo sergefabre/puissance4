@@ -4,6 +4,9 @@ import { GameModel } from './machine/GameMachine'
 export enum ServerError {
   AuthError,
 }
+export enum QueryParam {
+  GAMEID = 'gameId',
+}
 
 export enum GameStates {
   LOBBY = 'LOBBY',
